@@ -1,10 +1,9 @@
 install: #which pip packages to install
   - numpy
-import: #which relative python files to import into the pipeline, if not already included
-  - pass
+verbose: True
 background: # declare background processes, 
 # you can start and stop them in the begin, run or end blocks
-  - background1 : monitor.py
+  - background1 : monitor.py -> 
 instance: #declare class instances and the args to provide their instantiation
   - DefectReport : d 
 begin: # begin blocks execute before the pipeline starts running its main workload
@@ -14,9 +13,11 @@ run: # run blocks define the main workload
    - check: #can specify run phases like so
     # you can declare concurrent groups of functions to execute like so:
     concurrent:
-      - analyze 
+      - 'analyze workload 1'
+      - 'analyze workload 2'
+      - 'analyze workload 3'
     
-    - some_regular_function #call this function with nor arguments
+    - some_regular_function #call this function with no arguments
     - some_regular_function_with_args:
       - arg1
       - arg2
