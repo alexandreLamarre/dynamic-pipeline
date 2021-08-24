@@ -101,6 +101,9 @@ class Pipeline:
     '''
     Dynamic python automation pipeline class
 
+
+    Organizes the execution of the YAML config file into 'Artifacts'
+    which can be regular or multi-threaded workloads
     '''
 
     def __init__(self, verbose = False):
