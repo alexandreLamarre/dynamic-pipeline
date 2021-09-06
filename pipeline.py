@@ -2,21 +2,37 @@ import sys
 import traceback
 import time
 from enum import Enum
+import yaml
 
-def parseYAML():
-    '''
-    parse a YAML file
-    '''
+def parseYAML(file ="pipeline.YAML", callback=None):
+    '''!
+    @brief parse a YAML file
+    
+    @param file path to the YAML file to read from
+    @param callback callback function to be executed on the error, if an error occurs
+    @except YAMLERROR triggers error on malformed/unsafe YAML
+    @returns dict : the parsed contents of the file or None if could not be parsed
 
-    return
+    '''
+    res = None
+    with open(file, 'r') as stream:
+        try:
+            res = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            if callback is None:
+                print(exc)
+            else:
+                callback(exc)
+
+    return res
 
 class PipelineTracker:
-    '''
-    Tracks pipeline status for a given Pipeline Artifact
+    '''!
+    @brief Tracks pipeline status for a given Pipeline Artifact
     '''
     def __init__(self):
         '''
-        
+        @brief Constructor for Pipeline Trakcer
         '''
         self.return_value = None
         self.exec = None
