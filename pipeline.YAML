@@ -1,47 +1,73 @@
 install: #which pip packages to install
   - numpy
+src: #load python modules (must end in .py or .pyc) or other files like .txt, .yml, .csv
+  - tests/test1.YAML
+  - defectReport.py
+  - src/monitor.py
+vars:
+  - var1 : int(5)
+  - shname : bash
+
 verbose: True
-background: # declare background processes, 
-# you can start and stop them in the begin, run or end blocks
-  - background1 : monitor.py -> 
-instance: #declare class instances and the args to provide their instantiation
-  - DefectReport : d 
+
+instance: #declare python object instances and the args to provide their instantiation
+  - defectReport.DefectReport : d
+
+background: # declare background processes, # you can start and stop them in the begin, run or end blocks
+  - background1 : 
+    - shell : python3 monitor.py 
+    - py :  src.monitor.run()
+
 begin: # begin blocks execute before the pipeline starts running its main workload
   - start : background1 #starts background1 process
-
 run: # run blocks define the main workload
-   - check: #can specify run phases like so
+  - phases: # <- can specify run phases like so:
+    - check
+    - work
+    - cleanup
+  check:
+    - py: d.generateReport()
+    - shell : which bash
+    onfail:
+      pass
+    onsuccess:
+      pass
+  work:
+    - py : 
     # you can declare concurrent groups of functions to execute like so:
-    concurrent:
-      - 'analyze workload 1'
-      - 'analyze workload 2'
-      - 'analyze workload 3'
-    
-    - some_regular_function #call this function with no arguments
-    - some_regular_function_with_args:
-      - arg1
-      - arg2
-      - arg4 = 5
-  extract_db2diag.log:
-    - d.generateReport
-  analyze:
-    - d.analyze results
-  report:
-    - d.dumpReport
+    - concurrent: # or using equivalent async
+      - py: 'analyze_workload_1()'
+      - py: 'analyze_workload_2()'
+      - py: 'analyze_workload_3()'
+  
+  cleanup:
+    - py : some_other_func(mode='limited')
 
 end: #end blocks are always executed at the end of the pipeline, even on failure
   - stop background1 # stops background1 process, if not already stopped
 
-http: # can add html requests
-  domain:
-    - 'localhost:3000'
-  phase:
-    pass
-  pipeline:
-    pass
+# http: # can add html requests
+#   name: 'some website'
+#   domain:
+#     - 'localhost:3000'
+#   ignore: #phases to ignore
+#     - begin
+#     - run : check
 
-database:
-  domain: True
-  schema : 'schema name'
-  pipeline: True
+# database:
+#   name : "cloud db"
+#   type : 'some-url'
+#   domain: True
+#   schema : 'some schema name'
+#   pipeline: True
+
+# upload: 
+#   - cloud db
+#   - some website
+
+# cleanup : true
+
+# cleanup-ignore: 
+#   - 'defectReport.md'
+#   - 'defectReport.log'
   

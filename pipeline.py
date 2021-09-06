@@ -12,7 +12,6 @@ def parseYAML(file ="pipeline.YAML", callback=None):
     @param callback callback function to be executed on the error, if an error occurs
     @except YAMLERROR triggers error on malformed/unsafe YAML
     @returns dict : the parsed contents of the file or None if could not be parsed
-
     '''
     res = None
     with open(file, 'r') as stream:
@@ -81,9 +80,10 @@ class PipelineStatus(Enum):
         '''
         return repr(self)
 
-class PipelineArtifact:
-    '''
-
+class Artifact:
+    '''!
+    @brief An Artifact represents a unitary workload to be executed by the 
+    Pipeline
     '''
 
     def __init__(self, instance = None, background = False, *args):
@@ -98,13 +98,15 @@ class PipelineArtifact:
         '''
         pass
 
-class ConcurrentPipelineArtifact:
-    '''
-    
+class ConcurrentArtifact:
+    '''!
+    @brief A Concurrent Artifact represents a parallelized - concurrent workload
+    to be executed by the Pipeline
     '''
 
     def __init__(self, artifacts):
-        '''
+        '''!
+        @brief 
         
         '''
         self.status = PipelineTracker()
@@ -114,8 +116,8 @@ class ConcurrentPipelineArtifact:
 
 
 class Pipeline:
-    '''
-    Dynamic python automation pipeline class
+    '''!
+    @brief Dynamic python automation pipeline object
 
 
     Organizes the execution of the YAML config file into 'Artifacts'
@@ -123,20 +125,37 @@ class Pipeline:
     '''
 
     def __init__(self, verbose = False):
+        '''!
+        @brief Pipeline constructor
         '''
-        Initialize a dynamic execution pipeline
-        '''
+        ## @brief Controls whether or not the output of the pipeline is mirrored in stdout
+        #
         self.verbose = verbose
+        ## @brief Start time of the pipeline
+        #
         self.startTime = str(time.time())
+        ## @brief Output log name
+        #
         self.outputLog = 'pipeline_' + self.startTime + '.log' 
-        self.backgroundProcs = dict() #stores background processes
-        self.exec = [] # zipped list of artifacts and their Pipeline Tracker
-        self.http = []
-        self.database = []
+        ## @brief Map of background processes: proc name -> List[compiled py/shell code]
+        #
+        self.backgroundProcs = dict() 
+        ## @brief zipped list of pipeline artifacts and their associated trackers
+        #
+        self._exec = [] # zipped list of artifacts and their Pipeline Tracker
+
+        ## @brief Declared instances
+        #
+        self.instances = []
+
+
+        ## @brief Map of dynamic variables declared in YAML config file
+        #
+        self.vars = dict()
     
     def write_log(self, msg):
-        '''
-        Write pipeline output to a log
+        '''!
+        @brief Wrapper for writing pipeline output to a log
         '''
         if(not self.logfile):
             self.logfile = 'pipeline_' + self.startTime + '.log'
@@ -148,8 +167,8 @@ class Pipeline:
         f_log.close()
     
     def log(func, *args):
-        '''
-        Decorator for pipeline methods
+        '''!
+        @brief Logging/error handling decorator for pipeline methods
         '''
         def wrap(self, *args):
             '''
@@ -171,22 +190,25 @@ class Pipeline:
         
 
     def Load_from_YAML(self):
-        '''
-        Loads a pipeline to execute from a YAML file called 'pipeline.YAML' by default
+        '''!
+        @brief Loads a pipeline to execute from a YAML file called 'pipeline.YAML' by default
         but this can be overriden when you construct the actual Pipeline.
 
         Returns some nested dictionary/ list combination type
         '''
-        try:
-            f = open('./pipeline.YAML')
-        except:
-            e = sys.exc_info()
-
-            sys.exit()
-            pass
-        pass
+        
 
     def _constructPipeline(self):
+        '''!
+        @brief load and form the pipeline after loading the YAML config file
         '''
-        
-        '''
+    
+    def compilePython(code):
+        '''!
+    @brief Loads dynamic string representing python code into python executable code
+
+    This is the function that is used to load/execute strings `python`/`py`/`python3`/`py3`
+    tags in the pipeline.YAML config file
+    @param code str
+    '''
+    
