@@ -4,6 +4,8 @@
 
 ## What is this project?
 
+**Requires pyyaml pacakge to be installed** : `pip install pyyaml` or `pip3 install pyyaml`
+
 The project is a python-native and python-oriented automation pipeline implementation.
 This means it requires only python to set up some sort of CICD/build/workload pipeline - the caveat being is that it requires the rest of the automation code to be integrated into the pipeline to:
 

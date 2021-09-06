@@ -1,4 +1,12 @@
-sudo: false
+sudo: true
+language: python
+  - "3.6"
+  - "3.7"
+  - "3.8"
+  - "3.9"
+
+install:
+  - pip install -r requirements.txt
 
 branches:
   only:
@@ -11,6 +19,7 @@ addons:
 
 
 script:
+  - python3 pipeline_test.py
   - doxygen Doxyfile
 
 deploy:
