@@ -1,6 +1,7 @@
 # dynamic-pipeline
 
 <img src="https://app.travis-ci.com/alexandreLamarre/dynamic-pipeline.svg?branch=main"/>
+
 ## What is this project?
 
 The project is a python-native and python-oriented automation pipeline implementation.
