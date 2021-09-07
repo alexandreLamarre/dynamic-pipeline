@@ -191,6 +191,7 @@ class ConcurrentArtifact(Artifact):
         '''!
         @brief Execute the concurrent processes of the Artifact
         '''
+        # Method must be overloaded from parent
         pass
 
 

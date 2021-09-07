@@ -33,7 +33,14 @@ class TestPipeline(unittest.TestCase):
         res = pipeline.parseYAML("tests/parseYAML/test4.YAML")
         assert(res['piped-input'] == '\' def hello(): print("Hello world!") hello() \'')  
 
+        res = pipeline.parseYAML("tests/parseYAML/test5.YAML")
+        assert(res['empty'] is None)
+        assert(res['empty2'] is None)
+
     def testPipelineStatus(self):
+        '''!
+        @brief Tests PipelineStatus Object
+        '''
         pipeStat = pipeline.PipelineStatus(0)
         assert(pipeStat== pipeline.PipelineStatus.OK)
         assert(repr(pipeStat) == "Successful!")
@@ -50,6 +57,9 @@ class TestPipeline(unittest.TestCase):
         assert(repr(pipeStat) == str(pipeStat) and str(pipeStat) == pipeStat.out())
 
     def testPipelineTracker(self):
+        '''!
+        @brief Tests PipelineTracker Object
+        '''
         pipeTracker = pipeline.PipelineTracker()
         assert(pipeTracker.return_value is None)
         assert(pipeTracker.exec is None)
@@ -64,6 +74,20 @@ class TestPipeline(unittest.TestCase):
         assert(pipeTracker.getExecStatus() == "Exited with status 0.")
         pipeTracker.setMalformed(True)
         assert(pipeTracker.getMalformed())
+    
+    def testMisc(self):
+        '''!
+        @brief test miscellanious python interactions
+        '''
+        code = '5'
+        func = eval('lambda:' + code)
+        res = func()
+        assert(res == 5)
+        # code = ("def hello():\n"
+        #     '\treturn "Hello World!"\n'
+        #     'print(hello())')
+        # print(repr(code))
+        # func = eval('lambda:' + code)
 
 
 if __name__ == "__main__":

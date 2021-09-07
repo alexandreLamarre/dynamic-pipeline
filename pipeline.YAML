@@ -1,12 +1,16 @@
+# |-------------------------  Start Static Declarations --------------------------|
+
 install: #which pip packages to install
   - numpy
+
 src: #load python modules (must end in .py or .pyc) or other files like .txt, .yml, .csv
   - tests/test1.YAML
   - defectReport.py
   - src/monitor.py
+  
 vars:
-  - var1 : int(5)
-  - shname : bash
+  var1 : int(5)
+  shname : bash
 
 verbose: True
 
@@ -18,10 +22,19 @@ background: # declare background processes, # you can start and stop them in the
     - shell : python3 monitor.py 
     - py :  src.monitor.run()
 
+# |------------------------- End Static Declarations -----------------------------|
+
+# |------------------------- Start execution flow --------------------------------|
+
 begin: # begin blocks execute before the pipeline starts running its main workload
   - start : background1 #starts background1 process
+  on-success:
+    wait: 
+      py : 'some python conditional'
+      shell : 'some shell conditional'
+
 run: # run blocks define the main workload
-  - phases: # <- can specify run phases like so:
+  phases: # <- can specify run phases like so:
     - check
     - work
     - cleanup
@@ -30,7 +43,7 @@ run: # run blocks define the main workload
     - shell : which bash
     onfail:
       pass
-    onsuccess:
+    on-success:
       pass
   work:
     - py : 
@@ -46,28 +59,33 @@ run: # run blocks define the main workload
 end: #end blocks are always executed at the end of the pipeline, even on failure
   - stop background1 # stops background1 process, if not already stopped
 
-# http: # can add html requests
-#   name: 'some website'
-#   domain:
-#     - 'localhost:3000'
-#   ignore: #phases to ignore
-#     - begin
-#     - run : check
+cleanup : true
 
-# database:
-#   name : "cloud db"
-#   type : 'some-url'
-#   domain: True
-#   schema : 'some schema name'
-#   pipeline: True
+cleanup-ignore: 
+  - 'defectReport.md'
+  - 'defectReport.log'
+# |------------------------- End execution flow --------------------------------|
 
-# upload: 
-#   - cloud db
-#   - some website
+# |------------------------- Start Service Integration -------------------------|
 
-# cleanup : true
+http: # can add html requests
+  name: 'some website'
+  domain:
+    - 'localhost:3000'
+  ignore: #phases to ignore
+    - begin
+    - run : check
 
-# cleanup-ignore: 
-#   - 'defectReport.md'
-#   - 'defectReport.log'
+database:
+  name : "cloud db"
+  type : 'some-url'
+  domain: True
+  schema : 'some schema name'
+  pipeline: True
+
+upload: 
+  - cloud db
+  - some website
+
+# |------------------------- End Service Integration ---------------------------|
   
