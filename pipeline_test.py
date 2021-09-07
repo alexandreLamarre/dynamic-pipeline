@@ -49,5 +49,22 @@ class TestPipeline(unittest.TestCase):
         assert(repr(pipeStat) == "Failed!")
         assert(repr(pipeStat) == str(pipeStat) and str(pipeStat) == pipeStat.out())
 
+    def testPipelineTracker(self):
+        pipeTracker = pipeline.PipelineTracker()
+        assert(pipeTracker.return_value is None)
+        assert(pipeTracker.exec is None)
+        assert(not pipeTracker.malformed)
+        assert(pipeTracker.getReturnValue() is None)
+        assert(pipeTracker.getExecStatus() is None)
+        assert(not pipeTracker.getExecStatus())
+
+        pipeTracker.setReturnValue(0)
+        assert(pipeTracker.getReturnValue() == 0)
+        pipeTracker.setExecStatus("Exited with status 0.")
+        assert(pipeTracker.getExecStatus() == "Exited with status 0.")
+        pipeTracker.setMalformed(True)
+        assert(pipeTracker.getMalformed())
+
+
 if __name__ == "__main__":
     unittest.main()
