@@ -2,11 +2,11 @@ import unittest
 import importlib
 import pipeline
 
-
-
-
 class TestPipeline(unittest.TestCase):
     def test_parseYAML(self):
+        '''!
+        @brief Tests parse .YAML file method pipeline.parseYAML
+        '''
         #empty YAML
         res = pipeline.parseYAML("tests/parseYAML/test0.YAML")
         assert(res is None)
@@ -31,7 +31,23 @@ class TestPipeline(unittest.TestCase):
         assert(res['sample-nested-list']['two'] == ['quatro', 'cinqo', 'sixte'])
 
         res = pipeline.parseYAML("tests/parseYAML/test4.YAML")
-        assert(res['piped-input'] == '\' def hello(): print("Hello world!") hello() \'')        
+        assert(res['piped-input'] == '\' def hello(): print("Hello world!") hello() \'')  
+
+    def testPipelineStatus(self):
+        pipeStat = pipeline.PipelineStatus(0)
+        assert(pipeStat== pipeline.PipelineStatus.OK)
+        assert(repr(pipeStat) == "Successful!")
+        assert(repr(pipeStat) == str(pipeStat) and str(pipeStat) == pipeStat.out())
+
+        pipeStat = pipeline.PipelineStatus(1)
+        assert(pipeStat == pipeline.PipelineStatus.WARNING)
+        assert(repr(pipeStat) == "Executed with warnings.")
+        assert(repr(pipeStat) == str(pipeStat) and str(pipeStat) == pipeStat.out())
+
+        pipeStat = pipeline.PipelineStatus(2)
+        assert(pipeStat == pipeline.PipelineStatus.CRITICAL)
+        assert(repr(pipeStat) == "Failed!")
+        assert(repr(pipeStat) == str(pipeStat) and str(pipeStat) == pipeStat.out())
 
 if __name__ == "__main__":
     unittest.main()
